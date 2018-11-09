@@ -23,7 +23,7 @@
     // Valida que solo se ingresen numeros
     $scope.onlyNumber = function(parameter){
       let out = '';
-      let filtro = '1234567890-';
+      let filtro = '1234567890-/';
       for (let i = 0; i < parameter.currentTarget.value.length; i++) {
         if (filtro.indexOf(parameter.currentTarget.value.charAt(i)) != -1) {
           out += parameter.currentTarget.value.charAt(i);
@@ -32,9 +32,46 @@
       parameter.currentTarget.value = out
     }
 
-    $scope.calculate = function(){
-      $scope.identity_matrix = crea_matriz_identidad($scope.matrix, $scope.results);
-      console.log($scope.identity_matrix);
+    $scope.calculate = function(){      
+      FormatData($scope.matrix, $scope.results);
+      $scope.identity_matrix = crea_matriz_identidad($scope.matrix, $scope.results);      
+    }
+
+    function FormatData(matrix, results){
+      //////
+      matrix.forEach( function(matriz, indicei) {
+        matriz.forEach( function(valor, indicej) {
+          
+          if(valor.indexOf('/') != -1){
+              var separator = valor.split("/");              
+              $scope.matrix[indicei][indicej] = separator[0] / separator[1];
+          }
+        });                
+    });
+
+      
+      console.log(results);
+      results.forEach( function(result, indicei) {
+        if(result.indexOf('/') != -1){
+          var separator = result.split("/");
+          
+          console.log(" AS: " + separator[0] / separator[1]);
+          $scope.results[indicei] = separator[0] / separator[1];
+
+      }                    
+      });
+
+  /*    results.forEach( function(result, indicei) {        
+        console.log(" hay este valor: " + valor);          
+        if(valor.indexOf('/') != -1){
+            var separator = valor.split("/");
+            
+            console.log(" AS: " + separator[0] / separator[1]);
+            $scope.results[indicei][indicej] = separator[0] / separator[1];
+
+        }                    
+        debugger        
+    });*/
     }
 
 
