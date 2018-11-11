@@ -9,6 +9,7 @@
 
 
     $scope.createMatriz = function(dimensions){
+      $scope.results = []
       $scope.matrix = new Array(dimensions);
       //console.log(dimensions);
       for (var i = 0; i < dimensions; i++) {
@@ -23,7 +24,7 @@
     // Valida que solo se ingresen numeros
     $scope.onlyNumber = function(parameter){
       let out = '';
-      let filtro = '1234567890-/';
+      let filtro = '1234567890-/.';
       for (let i = 0; i < parameter.currentTarget.value.length; i++) {
         if (filtro.indexOf(parameter.currentTarget.value.charAt(i)) != -1) {
           out += parameter.currentTarget.value.charAt(i);
@@ -34,17 +35,17 @@
 
     $scope.calculate = function(){      
       FormatData($scope.matrix, $scope.results);
-      $scope.identity_matrix = crea_matriz_identidad($scope.matrix, $scope.results);      
+      $scope.identity_matrix = crea_matriz_identidad($scope.matrix, $scope.results);   
     }
 
-    function FormatData(matrix, results){
-      //////
+
+    function FormatData(matrix, results){     
       matrix.forEach( function(matriz, indicei) {
         matriz.forEach( function(valor, indicej) {
           
           if(valor.indexOf('/') != -1){
               var separator = valor.split("/");              
-              $scope.matrix[indicei][indicej] = separator[0] / separator[1];
+              $scope.matrix[indicei][indicej] = (separator[0] / separator[1]).toFixed(2);
           }
         });                
     });
@@ -53,36 +54,47 @@
       console.log(results);
       results.forEach( function(result, indicei) {
         if(result.indexOf('/') != -1){
-          var separator = result.split("/");
-          
-          console.log(" AS: " + separator[0] / separator[1]);
-          $scope.results[indicei] = separator[0] / separator[1];
-
+          var separator = result.split("/");          
+          $scope.results[indicei] = (separator[0] / separator[1]).toFixed(2);
       }                    
       });
-
-  /*    results.forEach( function(result, indicei) {        
-        console.log(" hay este valor: " + valor);          
-        if(valor.indexOf('/') != -1){
-            var separator = valor.split("/");
-            
-            console.log(" AS: " + separator[0] / separator[1]);
-            $scope.results[indicei][indicej] = separator[0] / separator[1];
-
-        }                    
-        debugger        
-    });*/
     }
 
 
 
-    function crea_matriz_identidad(A, b, update) {     
-      var lu = descomposicion_superior_inferiro(A, update)
-      if (lu === undefined) return
-      return EliminacionGaussiana(lu, b, update)
+    function crea_matriz_identidad(A, b, update) {
+      var data = [];
+      var lu = descomposicion_superior_inferior(A, update)
+      if (lu === undefined) return      
+      var array = EliminacionGaussiana(lu, b, update)
+      array.forEach( function(result, indicei) {        
+        data.push(intlRound(result));
+       /* if(result.toString().indexOf('.') != -1){          
+          if(result.toString().indexOf('.0000') != -1){
+            var separator = result.toString().split(".");             
+            data.push(separator[0]);   
+          }
+          else{
+            data.push( Math.round10(result.toFixed(2), -1));             
+          }          
+      }      
+      else{
+        data.push(result);
+      }*/
+      });      
+      return data
     };
+
+    function intlRound(numero, decimales = 2, usarComa = false) {    
+      var opciones = {
+          maximumFractionDigits: decimales, 
+          useGrouping: false
+      };
+      usarComa = usarComa ? "es" : "en";
+      return new Intl.NumberFormat(usarComa, opciones).format(numero);      
+  }
  
-    function descomposicion_superior_inferiro(A, update) {
+    function descomposicion_superior_inferior(A, update) {
       var d = true;
       var n = A.length;
       var idx = new Array(n);

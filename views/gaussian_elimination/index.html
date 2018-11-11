@@ -33,10 +33,10 @@
 						</tr>
 					</thead>
 	  			<tbody>
-						<tr ng-repeat="(key_fil, value_fil) in matrix">
+						<tr class="text-left" ng-repeat="(key_fil, value_fil) in matrix">
 							<td><b>Fila </b><sub>{{key_fil + 1}}</sub></td>
 	  					<td ng-repeat="(key_col, value_fila) in matrix">
-	  						<input ng-blur='blur(matrix[key_fil], key_fil)' ng-keyup='onlyNumber($event)' type="text" style="width: 80px;" ng-model="matrix[key_fil][key_col]" placeholder="[{{key_fil}}][{{key_col}}]">
+	  						<input ng-keyup='onlyNumber($event)' type="text" style="width: 80px;" ng-model="matrix[key_fil][key_col]" placeholder="[{{key_fil}}][{{key_col}}]">
 							</td>
 	  					<td>
 	  						<input ng-keyup='onlyNumber($event)' type="text" style="width: 80px;" ng-model="results[key_fil]" placeholder="[{{key_fil}}]">
@@ -55,11 +55,11 @@
 	</div>
 	<hr>
 	<div class="row">
-		<div class="col-sm-offset-4 col-sm-4">
+		<div class="col-sm-offset-4 col-sm-4 text-left">
 			<ul class="list-group">
-			  <li class="list-group-item" ng-repeat="(key, value) in identity_matrix">
-			    <span class="badge" ng-bind="value.toFixed(4);"></span>
-			    <b>F</b><sub>{{key + 1}}</sub>
+			  <li class="list-group-item" ng-repeat="(key, value) in identity_matrix track by $index">
+			    <span class="badge" ng-bind="value"></span>
+			    <b>Fila</b><sub>{{key + 1}}</sub>
 			  </li>
 			</ul>
 		</div>
