@@ -45,7 +45,7 @@
           
           if(valor.indexOf('/') != -1){
               var separator = valor.split("/");              
-              $scope.matrix[indicei][indicej] = (separator[0] / separator[1]).toFixed(2);
+              $scope.matrix[indicei][indicej] = (separator[0] / separator[1]);
           }
         });                
     });
@@ -55,7 +55,7 @@
       results.forEach( function(result, indicei) {
         if(result.indexOf('/') != -1){
           var separator = result.split("/");          
-          $scope.results[indicei] = (separator[0] / separator[1]).toFixed(2);
+          $scope.results[indicei] = (separator[0] / separator[1]);
       }                    
       });
     }
@@ -67,8 +67,8 @@
       var lu = descomposicion_superior_inferior(A, update)
       if (lu === undefined) return      
       var array = EliminacionGaussiana(lu, b, update)
-      array.forEach( function(result, indicei) {        
-        data.push(intlRound(result));
+      array.forEach( function(result, indicei) {              
+        data.push(decimalToFraction(result, false));
        /* if(result.toString().indexOf('.') != -1){          
           if(result.toString().indexOf('.0000') != -1){
             var separator = result.toString().split(".");             
@@ -84,6 +84,50 @@
       });      
       return data
     };
+
+    function decimalToFraction(value, donly = true) {
+      var tolerance = 1.0E-6; // a partir de cuantas decimales se hace el redondeo
+      var h1 = 1;
+      var h2 = 0;
+      var k1 = 0;
+      var k2 = 1;
+      var negative = false;
+      var i;
+     
+      if (parseInt(value) == value) { // si el valor es un número entero, detener el código
+        return value;
+      } else if (value < 0) {
+        negative = true;
+        value = -value;
+      }
+     
+      if (donly) {
+        i = parseInt(value);
+        value -= i;
+      }
+     
+      var b = value;
+     
+      do {
+        var a = Math.floor(b);
+        console.log(a)
+        var aux = h1;
+        h1 = a * h1 + h2;
+        h2 = aux;
+        aux = k1;
+        k1 = a * k1 + k2;
+        k2 = aux;
+        b = 1 / (b - a);
+      } while (Math.abs(value - h1 / k1) > value * tolerance);     
+     var result = '';
+     if(k1 == 1 && h1 != 0){
+       result = h1
+
+     }else{
+       result = (h1 == 0 ? '' : h1 + "/" + k1)
+     }
+      return (negative ? "-" : '') + ((donly & (i != 0)) ? i + ' ' : '') + result;
+    }
 
     function intlRound(numero, decimales = 2, usarComa = false) {    
       var opciones = {
