@@ -7,21 +7,18 @@
     $scope.results = [];
     $scope.identity_matrix = [];
 
-
+    //Crea la matriz con sus dimensiones
     $scope.createMatriz = function(dimensions){
       $scope.results = []
       $scope.matrix = new Array(dimensions);
-      //console.log(dimensions);
       for (var i = 0; i < dimensions; i++) {
         $scope.matrix[i] = new Array(dimensions);
         for (var j = 0; j < dimensions; j++) {
-          //console.log("["+i+"]["+j+"]");
           $scope.matrix[i][j] = "";
         }
-      }
-      //console.log($scope.matrix[0][2]);
+      }      
     }
-    // Valida que solo se ingresen numeros
+    // Valida que solo se ingresen numeros y 2 caracteres especiales.
     $scope.onlyNumber = function(parameter){
       let out = '';
       let filtro = '1234567890-/.';
@@ -33,12 +30,13 @@
       parameter.currentTarget.value = out
     }
 
+    //Calcula el resultado de la matriz creando la matriz identidad
     $scope.calculate = function(){      
       FormatData($scope.matrix, $scope.results);
       $scope.identity_matrix = crea_matriz_identidad($scope.matrix, $scope.results);   
     }
 
-
+    //Divide los numeros que son fraccionarios de la matriz y del resultado.
     function FormatData(matrix, results){     
       matrix.forEach( function(matriz, indicei) {
         matriz.forEach( function(valor, indicej) {
@@ -49,9 +47,7 @@
           }
         });                
     });
-
-      
-      console.log(results);
+            
       results.forEach( function(result, indicei) {
         if(result.indexOf('/') != -1){
           var separator = result.split("/");          
@@ -61,30 +57,19 @@
     }
 
 
-
-    function crea_matriz_identidad(A, b, update) {
+    //Crea la matriz identidad y retorna el resultado de la ecuación.
+    function crea_matriz_identidad(A, b, update) {      
       var data = [];
-      var lu = descomposicion_superior_inferior(A, update)
+      var lu = descomposicion_superior_inferior(A, update)      
       if (lu === undefined) return      
       var array = EliminacionGaussiana(lu, b, update)
       array.forEach( function(result, indicei) {              
-        data.push(decimalToFraction(result, false));
-       /* if(result.toString().indexOf('.') != -1){          
-          if(result.toString().indexOf('.0000') != -1){
-            var separator = result.toString().split(".");             
-            data.push(separator[0]);   
-          }
-          else{
-            data.push( Math.round10(result.toFixed(2), -1));             
-          }          
-      }      
-      else{
-        data.push(result);
-      }*/
+        data.push(decimalToFraction(result, false));     
       });      
       return data
     };
 
+    //Convierte los decimales en  fracciones.
     function decimalToFraction(value, donly = true) {
       var tolerance = 1.0E-6; // a partir de cuantas decimales se hace el redondeo
       var h1 = 1;
@@ -128,16 +113,8 @@
      }
       return (negative ? "-" : '') + ((donly & (i != 0)) ? i + ' ' : '') + result;
     }
-
-    function intlRound(numero, decimales = 2, usarComa = false) {    
-      var opciones = {
-          maximumFractionDigits: decimales, 
-          useGrouping: false
-      };
-      usarComa = usarComa ? "es" : "en";
-      return new Intl.NumberFormat(usarComa, opciones).format(numero);      
-  }
  
+    //Descompone la linea superior he inferior de la matriz.
     function descomposicion_superior_inferior(A, update) {
       var d = true;
       var n = A.length;
@@ -210,7 +187,7 @@
      
       if (!update) {
         var bcpy = new Array(n) 
-        for (var i=0; i<b.length; i+=1) bcpy[i] = b[i]
+        for (var i=0; i<b.length; i+=1) bcpy[i] = b[i]        
         b = bcpy
       }
      
@@ -221,13 +198,18 @@
         if (ii > -1)
           for (var j=ii; j<i; j++) sum -= A[i][j] * b[j]
         else if (sum)
-          ii = i
+          ii = i          
         b[i] = sum
       }
       for (var i=n-1; i>=0; i--) {
         var sum = b[i]
-        for (var j=i+1; j<n; j++) sum -= A[i][j] * b[j]
-        b[i] = sum / A[i][i]
+        for (var j=i+1; j<n; j++) sum -= A[i][j] * b[j]                
+        if(sum == 0 && A[i][i] == 0){
+          b[i] = 0
+        }
+        else{
+          b[i] = sum / A[i][i]
+        }        
       }
       return b
     }
