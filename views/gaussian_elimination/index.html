@@ -1,0 +1,69 @@
+<div class="container-fluid text-right">
+	<h4>Nicolas Vargas/David Agudelo</h4>
+</div>
+<div class="container-fluid text-center">
+	<h1>Calculadora para resolver ecuaciones lineales</h1>
+	<h4>Ingrese la dimension (La cantidad de ecuaciones debe ser igual a la cantidad de variables) de la matriz.</h4>
+
+	
+	<div class="form-inline">
+			  <div class="form-group">
+			  	<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+			    <div class="input-group">
+			      <div class="input-group-addon">Ecuaciones</div>
+			      <input ng-keyup='onlyNumber($event)' type="text" class="form-control" id="inputEcu" ng-model="dimensions" placeholder="Numero de Ecuaciones">
+			    </div>
+			  </div>
+			  <button type="button" class="btn btn-primary" ng-click="createMatriz(dimensions)">Crear Matriz</button>
+			</div>
+
+	<div class="row">
+		<div class="col-sm-offset-4">
+		</div>
+		<hr>
+
+		<div class="col-sm-12" ng-if="dimensions !== 0 && matrix.length !== 0">
+			<div class="table-responsive">
+			  <table class="table">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th ng-repeat="(key_fil, value_fil) in matrix">Columna {{key_fil + 1}}</th>
+							<th>Resultado</th>
+						</tr>
+					</thead>
+	  			<tbody>
+						<tr class="text-left" ng-repeat="(key_fil, value_fil) in matrix">
+							<td><b>Fila </b><sub>{{key_fil + 1}}</sub></td>
+	  					<td ng-repeat="(key_col, value_fila) in matrix">
+	  						<input ng-keyup='onlyNumber($event)' type="text" style="width: 80px;" ng-model="matrix[key_fil][key_col]" placeholder="[{{key_fil}}][{{key_col}}]">
+							</td>
+	  					<td>
+	  						<input ng-keyup='onlyNumber($event)' type="text" style="width: 80px;" ng-model="results[key_fil]" placeholder="[{{key_fil}}]">
+	  					</td>
+	  				</tr>
+	  			</tbody>
+				</table>
+			</div>
+
+			<div class="form-group">
+		    <div class="col-sm-2 col-sm-offset-10">
+		      <button type="button" ng-click="calculate()" class="btn btn-default">Calcular</button>
+		    </div>
+		  </div>
+		</div>
+	</div>
+	<hr>
+	<div class="row">
+		<div class="col-sm-offset-4 col-sm-4 text-left">
+			<ul class="list-group">
+			  <li class="list-group-item" ng-repeat="(key, value) in identity_matrix track by $index">
+			    <span class="badge" ng-bind="value"></span>
+			    <b>Fila</b><sub>{{key + 1}}</sub>
+			  </li>
+			</ul>
+		</div>
+	</div>
+
+</div>
+
